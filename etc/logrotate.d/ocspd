@@ -1,0 +1,9 @@
+/usr/local/ocspd/var/log/*.log {
+    daily
+    rotate 7
+    copytruncate
+    compress
+    missingok
+    create 0644 ocspd ocspd
+    su ocspd ocspd
+}

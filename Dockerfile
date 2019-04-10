@@ -8,7 +8,7 @@ RUN apt-get update && \
 		wget \
 		libldap-dev \
 		libxml2-dev \
-		libssl-dev &&\
+		libssl-dev supervisor logrotate cron &&\
 	apt-get clean && \
 	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
@@ -55,4 +55,9 @@ ADD ./ca.xml /usr/local/ocspd/etc/ocspd/ca.d/ca.xml
 ADD ./ocspd.xml /usr/local/ocspd/etc/ocspd/ocspd.xml
 ADD ./token.xml /usr/local/ocspd/etc/ocspd/pki/token.d/token.xml
 
-CMD ["/usr/local/ocspd/run_ocspd.sh"]
+COPY etc/logrotate.d/* /etc/logrotate.d/
+COPY etc/supervisor/conf.d/* /etc/supervisor/conf.d/
+COPY my_setup.sh /tmp/
+RUN /bin/bash /tmp/my_setup.sh
+
+CMD ["supervisord"]
