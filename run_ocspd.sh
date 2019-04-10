@@ -1,54 +1,60 @@
 #!/bin/bash
 
-cd /usr/local/ocspd/
+ocspd_dir="/usr/local/ocspd"
+cd ${ocspd_dir}
+mountCertDir="/data/ocspd"
+file_cacert="ca.crt"
+file_cert="ocspd.crt"
+file_certkey="ocspd.key"
+file_cacrl="crl.crl"
+msg_addVolume="please add volume \`${mountCertDir}\` with \`${file_cacert}\`, \`${file_cert}\`, \`${file_certkey}\` and \`${file_cacrl}\` to container"
 
-if [ -f "/data/ocspd/ca.crt" ]
+if [ -f "${mountCertDir}/${file_cacert}" ]
 then
-	if [ ! -f "/usr/local/ocspd/etc/ocspd/certs/ca.crt" ]
+	if [ ! -f "${ocspd_dir}/etc/ocspd/certs/${file_cacert}" ]
 	then
-		ln -s /data/ocspd/ca.crt /usr/local/ocspd/etc/ocspd/certs/ca.crt
+		ln -s ${mountCertDir}/${file_cacert}  ${ocspd_dir}/etc/ocspd/certs/${file_cacert}
 	fi
 else
-	echo "/data/ocspd/ca.crt not found: please add volume /data/ocspd/ with ca.crt, ocspd.crt, ocspd.key and crl.crl to container"
+	echo "\`${mountCertDir}/${file_cacert}\` not found: ${msg_addVolume}"
 	exit 1
 fi
 
-if [ -f "/data/ocspd/ocspd.crt" ]
+if [ -f "${mountCertDir}/${file_cert}" ]
 then
-	if [ ! -f "/usr/local/ocspd/etc/ocspd/certs/ocspd.crt" ]
+	if [ ! -f "${ocspd_dir}/etc/ocspd/certs/${file_cert}" ]
 	then
-		ln -s /data/ocspd/ocspd.crt /usr/local/ocspd/etc/ocspd/certs/ocspd.crt
+		ln -s ${mountCertDir}/${file_cert}  ${ocspd_dir}/etc/ocspd/certs/${file_cert}
 	fi
 else
-	echo "/data/ocspd/ocspd.crt not found: please add volume /data/ocspd/ with ca.crt, ocspd.crt, ocspd.key and crl.crl to container"
+	echo "\`${mountCertDir}/${file_cert}\` not found: ${msg_addVolume}"
 	exit 1
 fi
 
-if [ -f "/data/ocspd/ocspd.key" ]
+if [ -f "${mountCertDir}/${file_certkey}" ]
 then
-	if [ ! -f "/usr/local/ocspd/etc/ocspd/private/ocspd.key" ]
+	if [ ! -f "${ocspd_dir}/etc/ocspd/private/${file_certkey}" ]
 	then
-		ln -s /data/ocspd/ocspd.key /usr/local/ocspd/etc/ocspd/private/ocspd.key
+		ln -s ${mountCertDir}/${file_certkey}  ${ocspd_dir}/etc/ocspd/private/${file_certkey}
 	fi
 else
-	echo "/data/ocspd/ocspd.key not found: please add volume /data/ocspd/ with ca.crt, ocspd.crt, ocspd.key and crl.crl to container"
+	echo "\`${mountCertDir}/${file_certkey}\` not found: ${msg_addVolume}"
 	exit 1
 fi
 
-if [ -f "/data/ocspd/crl.crl" ]
+if [ -f "${mountCertDir}/${file_cacrl}" ]
 then
-	if [ ! -f "/usr/local/ocspd/etc/ocspd/crls/crl.crl" ]
+	if [ ! -f "${ocspd_dir}/etc/ocspd/crls/${file_cacrl}" ]
 	then
-		ln -s /data/ocspd/crl.crl /usr/local/ocspd/etc/ocspd/crls/crl.crl
+		ln -s ${mountCertDir}/${file_cacrl}  ${ocspd_dir}/etc/ocspd/crls/${file_cacrl}
 	fi
 else
-	echo "/data/ocspd/crl.crl not found: please add volume /data/ocspd/ with ca.crt, ocspd.crt, ocspd.key and crl.crl to container"
+	echo "\`${mountCertDir}/${file_cacrl}\` not found: ${msg_addVolume}"
 	exit 1
 fi
 
-chown -R ocspd:ocspd /usr/local/ocspd/
+chown -R ocspd:ocspd ${ocspd_dir}/
 
 sleep 1
 
-/usr/local/ocspd/sbin/ocspd -stdout -c /usr/local/ocspd/etc/ocspd/ocspd.xml
-
+${ocspd_dir}/sbin/ocspd -stdout -c ${ocspd_dir}/etc/ocspd/ocspd.xml -v -debug 1>>${ocspd_dir}/var/log/ocspd.log 2>&1
