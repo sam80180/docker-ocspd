@@ -1,0 +1,4 @@
+#!/bin/bash
+script=`dirname $0`
+cwd=`readlink -f ${script}`
+${cwd}/etc/init.d/ocspd $1
