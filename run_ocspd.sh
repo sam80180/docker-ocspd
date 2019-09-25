@@ -53,9 +53,9 @@ else
 	exit 1
 fi
 
+mkdir -p ${ocspd_dir}/var/log
 chown -R ocspd:ocspd ${ocspd_dir}/
 
 sleep 1
 
-mkdir -p ${ocspd_dir}/var/log
 ${ocspd_dir}/sbin/ocspd -stdout -c ${ocspd_dir}/etc/ocspd/ocspd.xml -v -debug 2>&1 | tee -a ${ocspd_dir}/var/log/ocspd.log
