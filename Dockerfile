@@ -50,6 +50,7 @@ RUN wget http://downloads.sourceforge.net/project/openca/openca-ocspd/releases/v
 WORKDIR /usr/local/ocspd
 
 ADD ./run_ocspd.sh /usr/local/ocspd/run_ocspd.sh
+ADD ./ocspdctl /usr/local/ocspd/ocspdctl
 
 ADD ./ca.xml /usr/local/ocspd/etc/ocspd/ca.d/ca.xml
 ADD ./ocspd.xml /usr/local/ocspd/etc/ocspd/ocspd.xml
